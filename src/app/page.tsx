@@ -13,12 +13,56 @@ import { Button } from "@/components/button";
 import { RadioButton } from "@/components/radio-button";
 import { getCurrentDateForInput } from "@/utils";
 
+const availableTimes = {
+  morning: [
+    { id: crypto.randomUUID(), time: "09:00" },
+    { id: crypto.randomUUID(), time: "10:00" },
+    { id: crypto.randomUUID(), time: "11:00" },
+    { id: crypto.randomUUID(), time: "12:00" },
+  ],
+  afternoon: [
+    { id: crypto.randomUUID(), time: "13:00" },
+    { id: crypto.randomUUID(), time: "14:00" },
+    { id: crypto.randomUUID(), time: "15:00" },
+    { id: crypto.randomUUID(), time: "16:00" },
+    { id: crypto.randomUUID(), time: "17:00" },
+    { id: crypto.randomUUID(), time: "18:00" },
+  ],
+  night: [
+    { id: crypto.randomUUID(), time: "19:00" },
+    { id: crypto.randomUUID(), time: "20:00" },
+    { id: crypto.randomUUID(), time: "21:00" },
+  ],
+};
+
 export default function Home() {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [checkedTime, setCheckedTime] = useState(true);
+  const inputDateRef = useRef<HTMLInputElement>(null);
+  const inputNameCustomerRef = useRef<HTMLInputElement>(null);
+  const inputSelectDateRef = useRef<HTMLInputElement>(null);
+
+  const [validatedDate, setValidatedDate] = useState(false);
+  const [selectedTimeId, setSelectedTimeId] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState<string>("");
 
   function openDatePicker() {
-    inputRef.current?.showPicker();
+    inputDateRef.current?.showPicker();
+  }
+
+  function handleSetDate(e: string) {
+    if (e !== "") {
+      setValidatedDate(true);
+    } else {
+      setValidatedDate(false);
+      setSelectedTimeId(null);
+    }
+  }
+
+  function handleSelectTime(timeId: string) {
+    setSelectedTimeId(timeId);
+  }
+
+  function openSelectDatePicker() {
+    inputSelectDateRef.current?.showPicker();
   }
 
   return (
@@ -46,10 +90,11 @@ export default function Home() {
             >
               <CalendarBlankIcon size={20} className="fill-yellow" />
               <input
-                ref={inputRef}
+                ref={inputDateRef}
                 type="date"
                 name="date-picker"
-                id=""
+                min={getCurrentDateForInput()}
+                onChange={(e) => handleSetDate(e.target.value)}
                 className="text-base/6 font-normal text-gray-200 outline-none bg-transparent"
               />
               <CaretDownIcon size={20} className="ml-auto fill-gray-300" />
@@ -62,140 +107,70 @@ export default function Home() {
             <div className="space-y-3">
               <p className="text-sm/5 text-gray-300 mb-2">Manhã</p>
               <div className="grid grid-cols-4 gap-2">
-                <RadioButton
-                  label="09:00"
-                  value="09:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="10:00"
-                  value="10:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="11:00"
-                  value="11:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="12:00"
-                  value="12:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
+                {availableTimes.morning.map((time) => (
+                  <RadioButton
+                    key={time.id}
+                    label={time.time}
+                    value={time.time}
+                    name="time"
+                    disabled={!validatedDate}
+                    checked={selectedTimeId === time.id}
+                    onChange={() => handleSelectTime(time.id)}
+                  />
+                ))}
               </div>
             </div>
             <div className="space-y-3">
               <p className="text-sm/5 text-gray-300 mb-2">Tarde</p>
               <div className="grid grid-cols-4 gap-2">
-                <RadioButton
-                  label="13:00"
-                  value="13:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="14:00"
-                  value="14:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="15:00"
-                  value="15:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="16:00"
-                  value="16:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="17:00"
-                  value="17:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="18:00"
-                  value="18:00"
-                  name="time"
-                  disabled
-                  checked={checkedTime}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
+                {availableTimes.afternoon.map((time) => (
+                  <RadioButton
+                    key={time.id}
+                    label={time.time}
+                    value={time.time}
+                    name="time"
+                    disabled={!validatedDate}
+                    checked={selectedTimeId === time.id}
+                    onChange={() => handleSelectTime(time.id)}
+                  />
+                ))}
               </div>
             </div>
             <div className="space-y-3">
               <p className="text-sm/5 text-gray-300 mb-2">Noite</p>
               <div className="grid grid-cols-4 gap-2">
-                <RadioButton
-                  label="19:00"
-                  value="19:00"
-                  name="time"
-                  disabled
-                  checked={false}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="20:00"
-                  value="20:00"
-                  name="time"
-                  checked={false}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
-                <RadioButton
-                  label="21:00"
-                  value="21:00"
-                  name="time"
-                  checked={true}
-                  onChange={() => setCheckedTime(!checkedTime)}
-                />
+                {availableTimes.night.map((time) => (
+                  <RadioButton
+                    key={time.id}
+                    label={time.time}
+                    value={time.time}
+                    name="time"
+                    disabled={!validatedDate}
+                    checked={selectedTimeId === time.id}
+                    onChange={() => handleSelectTime(time.id)}
+                  />
+                ))}
               </div>
             </div>
           </div>
           <div className="my-8">
             <span className="text-base/6 font-bold text-gray-200">Cliente</span>
             <button
-              onClick={openDatePicker}
               type="button"
               className="cursor-pointer focus-within:border-yellow-dark transition-colors p-3 rounded-xl border border-gray-500 flex items-center gap-2 w-full mt-2"
             >
               <UserSquareIcon size={20} className="fill-yellow" />
               <input
-                ref={inputRef}
                 type="text"
-                name="customer-name"
-                id=""
+                name="customerName"
                 placeholder="Paulo Braz"
                 className="text-base/6 font-normal text-gray-200 outline-none bg-transparent"
+                onChange={(e) => setCustomerName(e.target.value)}
+                value={customerName}
               />
             </button>
           </div>
-          <Button>Agendar</Button>
+          <Button disabled={customerName === ""}>Agendar</Button>
         </form>
       </aside>
       <main className="w-full pt-20">
@@ -208,13 +183,13 @@ export default function Home() {
               </p>
             </div>
             <button
-              onClick={openDatePicker}
+              onClick={openSelectDatePicker}
               type="button"
               className="cursor-pointer focus-within:border-yellow-dark transition-colors p-3 rounded-xl border border-gray-500 flex items-center justify-center gap-2"
             >
               <CalendarBlankIcon size={20} className="fill-yellow" />
               <input
-                ref={inputRef}
+                ref={inputSelectDateRef}
                 type="date"
                 name="date-picker"
                 id=""
