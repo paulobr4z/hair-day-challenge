@@ -37,7 +37,6 @@ const availableTimes = {
 
 export default function Home() {
   const inputDateRef = useRef<HTMLInputElement>(null);
-  const inputNameCustomerRef = useRef<HTMLInputElement>(null);
   const inputSelectDateRef = useRef<HTMLInputElement>(null);
 
   const [validatedDate, setValidatedDate] = useState(false);
@@ -170,7 +169,9 @@ export default function Home() {
               />
             </button>
           </div>
-          <Button disabled={customerName === ""}>Agendar</Button>
+          <Button disabled={customerName === "" || !validatedDate}>
+            Agendar
+          </Button>
         </form>
       </aside>
       <main className="w-full pt-20">
