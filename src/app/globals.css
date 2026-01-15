@@ -15,3 +15,18 @@
   --color-gray-800: #19181B;
   --color-gray-900: #050505;
 }
+
+body {
+  font-family: var(--font-catamaran), sans-serif;
+}
+
+@layer base {
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="date"] {
+    appearance: none;
+  }
+}

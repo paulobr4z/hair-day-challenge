@@ -3,8 +3,9 @@ import { Catamaran } from "next/font/google";
 import "./globals.css";
 
 const catamaran = Catamaran({
-  variable: "--font-geist-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-catamaran",
 });
 
 export const metadata: Metadata = {
@@ -19,7 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${catamaran.variable} antialiased`}>{children}</body>
+      <body className={`${catamaran.variable} antialiased bg-gray-800`}>
+        {children}
+      </body>
     </html>
   );
 }
