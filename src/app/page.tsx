@@ -3,15 +3,15 @@
 import {
   CalendarBlankIcon,
   CaretDownIcon,
-  SunHorizonIcon,
-  TrashIcon,
   UserSquareIcon,
 } from "@phosphor-icons/react";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { AppointmentSection } from "@/components/appointment-section";
 import { Button } from "@/components/button";
 import { RadioButton } from "@/components/radio-button";
-import { getCurrentDateForInput } from "@/utils";
+import type { IAppointment } from "@/types";
+import { getAppointmentsByPeriod, getCurrentDateForInput } from "@/utils";
 
 const availableTimes = {
   morning: [
@@ -42,6 +42,9 @@ export default function Home() {
   const [validatedDate, setValidatedDate] = useState(false);
   const [selectedTimeId, setSelectedTimeId] = useState<string | null>(null);
   const [customerName, setCustomerName] = useState<string>("");
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentHour, setAppointmentHour] = useState("");
+  const [appointments, setAppointments] = useState<IAppointment[]>([]);
 
   function openDatePicker() {
     inputDateRef.current?.showPicker();
@@ -50,19 +53,46 @@ export default function Home() {
   function handleSetDate(e: string) {
     if (e !== "") {
       setValidatedDate(true);
+      setAppointmentDate(e);
     } else {
       setValidatedDate(false);
       setSelectedTimeId(null);
     }
   }
 
-  function handleSelectTime(timeId: string) {
+  function handleSelectTime(time: string, timeId: string) {
     setSelectedTimeId(timeId);
+    setAppointmentHour(time);
   }
 
   function openSelectDatePicker() {
     inputSelectDateRef.current?.showPicker();
   }
+
+  function handleSubmit() {
+    const updated = [...appointments];
+
+    const newAppointment = {
+      id: crypto.randomUUID(),
+      date: appointmentDate,
+      time: appointmentHour,
+      customer: customerName,
+    };
+
+    updated.push(newAppointment);
+
+    setAppointments(updated);
+    setAppointmentDate("");
+    setAppointmentHour("");
+    setCustomerName("");
+    setValidatedDate(false);
+  }
+
+  const groupedAppointments = {
+    morning: getAppointmentsByPeriod(appointments, "morning"),
+    afternoon: getAppointmentsByPeriod(appointments, "afternoon"),
+    night: getAppointmentsByPeriod(appointments, "night"),
+  };
 
   return (
     <div className="relative p-3 flex gap-3 flex-col md:flex-row max-w-360 mx-auto min-h-screen">
@@ -79,7 +109,7 @@ export default function Home() {
             agendamento
           </p>
         </div>
-        <form action="">
+        <form>
           <div className="flex flex-col gap-2">
             <span className="text-gray-200 text-base/6 font-bold">Data</span>
             <button
@@ -114,7 +144,7 @@ export default function Home() {
                     name="time"
                     disabled={!validatedDate}
                     checked={selectedTimeId === time.id}
-                    onChange={() => handleSelectTime(time.id)}
+                    onChange={() => handleSelectTime(time.time, time.id)}
                   />
                 ))}
               </div>
@@ -130,7 +160,7 @@ export default function Home() {
                     name="time"
                     disabled={!validatedDate}
                     checked={selectedTimeId === time.id}
-                    onChange={() => handleSelectTime(time.id)}
+                    onChange={() => handleSelectTime(time.time, time.id)}
                   />
                 ))}
               </div>
@@ -146,7 +176,7 @@ export default function Home() {
                     name="time"
                     disabled={!validatedDate}
                     checked={selectedTimeId === time.id}
-                    onChange={() => handleSelectTime(time.id)}
+                    onChange={() => handleSelectTime(time.time, time.id)}
                   />
                 ))}
               </div>
@@ -162,14 +192,17 @@ export default function Home() {
               <input
                 type="text"
                 name="customerName"
-                placeholder="Paulo Braz"
+                placeholder="Digite seu nome"
                 className="text-base/6 font-normal text-gray-200 outline-none bg-transparent"
                 onChange={(e) => setCustomerName(e.target.value)}
                 value={customerName}
               />
             </button>
           </div>
-          <Button disabled={customerName === "" || !validatedDate}>
+          <Button
+            onClick={() => handleSubmit()}
+            disabled={customerName === "" || !validatedDate}
+          >
             Agendar
           </Button>
         </form>
@@ -193,7 +226,7 @@ export default function Home() {
                 ref={inputSelectDateRef}
                 type="date"
                 name="date-picker"
-                id=""
+                min={getCurrentDateForInput()}
                 defaultValue={getCurrentDateForInput()}
                 className="text-base/6 font-normal text-gray-200 outline-none bg-transparent"
               />
@@ -201,47 +234,24 @@ export default function Home() {
             </button>
           </header>
           <div className="flex flex-col gap-3 mt-8">
-            <div>
-              <div className="border border-gray-600 rounded-xl">
-                <div className="flex gap-3 px-5 py-3 border-b border-gray-600">
-                  <SunHorizonIcon size={20} className="fill-yellow" />
-                  <p className="text-sm/5 text-gray-300">Manhã</p>
-                  <p className="text-sm/5 text-gray-300 ml-auto">09h-12h</p>
-                </div>
-                <div className="flex items-center gap-3 p-5">
-                  <b className="text-base/6 text-gray-200 font-bold">09:00</b>
-                  <p className="text-base/6 text-gray-200">Viviane Nayara</p>
-                  <TrashIcon size={20} className="fill-yellow ml-auto" />
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="border border-gray-600 rounded-xl">
-                <div className="flex gap-3 px-5 py-3 border-b border-gray-600">
-                  <SunHorizonIcon size={20} className="fill-yellow" />
-                  <p className="text-sm/5 text-gray-300">Manhã</p>
-                  <p className="text-sm/5 text-gray-300 ml-auto">09h-12h</p>
-                </div>
-                <div className="flex items-center gap-3 p-5">
-                  <b className="text-base/6 text-gray-200 font-bold">09:00</b>
-                  <p className="text-base/6 text-gray-200">Viviane Nayara</p>
-                  <TrashIcon size={20} className="fill-yellow ml-auto" />
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="border border-gray-600 rounded-xl">
-                <div className="flex gap-3 px-5 py-3 border-b border-gray-600">
-                  <SunHorizonIcon size={20} className="fill-yellow" />
-                  <p className="text-sm/5 text-gray-300">Manhã</p>
-                  <p className="text-sm/5 text-gray-300 ml-auto">09h-12h</p>
-                </div>
-                <div className="flex items-center gap-3 p-5">
-                  <p className="text-base/6 text-gray-200">
-                    Nenhum agendamento para este período
-                  </p>
-                </div>
-              </div>
+            <div className="flex flex-col gap-3 mt-8">
+              <AppointmentSection
+                title="Manhã"
+                range="09h-12h"
+                appointments={groupedAppointments.morning}
+              />
+
+              <AppointmentSection
+                title="Tarde"
+                range="13h-18h"
+                appointments={groupedAppointments.afternoon}
+              />
+
+              <AppointmentSection
+                title="Noite"
+                range="19h-21h"
+                appointments={groupedAppointments.night}
+              />
             </div>
           </div>
         </div>
