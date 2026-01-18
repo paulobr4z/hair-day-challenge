@@ -105,7 +105,12 @@ export default function Home() {
   return (
     <div className="relative p-3 flex gap-3 flex-col md:flex-row max-w-360 mx-auto min-h-screen">
       <div className="bg-gray-600 rounded-br-xl absolute top-0 left-0">
-        <Image src="./images/logo.svg" width={140} height={56} alt="logo" />
+        <Image
+          src="./images/logo.svg"
+          width={140}
+          height={56}
+          alt="hair day logo"
+        />
       </div>
       <aside className="p-20 bg-gray-700 rounded-xl max-w-124.5 w-full flex flex-col gap-6">
         <div>
