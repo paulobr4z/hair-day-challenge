@@ -46,9 +46,7 @@ export default function Home() {
   const [appointmentHour, setAppointmentHour] = useState("");
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
 
-  // [] - Se a hora que o usuario for marcar um horario estiver fora do proposto, desabilitar o dia no calendario
-  // [] - Listar os horarios de acordo com a data, se o usuario muda a data atualizar a listagem
-  // [] - Colocar todos os dados no localstorage
+  const [filterDate, setFilterDate] = useState(getCurrentDateForInput());
 
   function openDatePicker() {
     inputDateRef.current?.showPicker();
@@ -71,6 +69,10 @@ export default function Home() {
 
   function openSelectDatePicker() {
     inputSelectDateRef.current?.showPicker();
+  }
+
+  function handleFilterDateChange(date: string) {
+    setFilterDate(date);
   }
 
   function handleSubmit() {
@@ -96,14 +98,19 @@ export default function Home() {
     }
   }
 
+  // Filtrar appointments pela data selecionada
+  const filteredAppointments = appointments.filter(
+    (appointment) => appointment.date === filterDate,
+  );
+
+  // Agrupar apenas os appointments filtrados
   const groupedAppointments = {
-    morning: getAppointmentsByPeriod(appointments, "morning"),
-    afternoon: getAppointmentsByPeriod(appointments, "afternoon"),
-    night: getAppointmentsByPeriod(appointments, "night"),
+    morning: getAppointmentsByPeriod(filteredAppointments, "morning"),
+    afternoon: getAppointmentsByPeriod(filteredAppointments, "afternoon"),
+    night: getAppointmentsByPeriod(filteredAppointments, "night"),
   };
 
   function isTimeUnavailable(time: string) {
-    console.log(time);
     return appointments.some(
       (appointment) =>
         appointment.date === appointmentDate && appointment.time === time,
@@ -174,7 +181,7 @@ export default function Home() {
                     label={time.time}
                     value={time.time}
                     name="time"
-                    disabled={!validatedDate}
+                    disabled={!validatedDate || isTimeUnavailable(time.time)}
                     checked={selectedTimeId === time.id}
                     onChange={() => handleSelectTime(time.time, time.id)}
                   />
@@ -190,7 +197,7 @@ export default function Home() {
                     label={time.time}
                     value={time.time}
                     name="time"
-                    disabled={!validatedDate}
+                    disabled={!validatedDate || isTimeUnavailable(time.time)}
                     checked={selectedTimeId === time.id}
                     onChange={() => handleSelectTime(time.time, time.id)}
                   />
@@ -241,9 +248,10 @@ export default function Home() {
               <input
                 ref={inputSelectDateRef}
                 type="date"
-                name="date-picker"
+                name="date-picker-appointments"
                 min={getCurrentDateForInput()}
                 defaultValue={getCurrentDateForInput()}
+                onChange={(e) => handleFilterDateChange(e.target.value)}
                 className="text-base/6 font-normal text-gray-200 outline-none bg-transparent"
               />
               <CaretDownIcon size={20} className="ml-auto fill-gray-300" />

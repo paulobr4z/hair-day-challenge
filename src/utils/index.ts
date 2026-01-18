@@ -2,6 +2,11 @@ import type { IAppointment } from "@/types";
 
 export function getCurrentDateForInput(): string {
   const today = new Date();
+  const hour = today.getHours();
+
+  if (hour >= 20) {
+    today.setDate(today.getDate() + 1);
+  }
 
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
@@ -31,7 +36,7 @@ export function compareTimeAsc(a: string, b: string) {
 
 export function getAppointmentsByPeriod(
   appointments: IAppointment[],
-  period: Period
+  period: Period,
 ) {
   return appointments
     .filter((a) => getPeriodByTime(a.time) === period)
