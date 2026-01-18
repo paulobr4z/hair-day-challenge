@@ -46,6 +46,10 @@ export default function Home() {
   const [appointmentHour, setAppointmentHour] = useState("");
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
 
+  // [] - Se a hora que o usuario for marcar um horario estiver fora do proposto, desabilitar o dia no calendario
+  // [] - Listar os horarios de acordo com a data, se o usuario muda a data atualizar a listagem
+  // [] - Colocar todos os dados no localstorage
+
   function openDatePicker() {
     inputDateRef.current?.showPicker();
   }
@@ -56,8 +60,8 @@ export default function Home() {
       setAppointmentDate(e);
     } else {
       setValidatedDate(false);
-      setSelectedTimeId(null);
     }
+    setSelectedTimeId(null);
   }
 
   function handleSelectTime(time: string, timeId: string) {
@@ -86,6 +90,10 @@ export default function Home() {
     setAppointmentHour("");
     setCustomerName("");
     setValidatedDate(false);
+
+    if (inputDateRef.current) {
+      inputDateRef.current.value = "";
+    }
   }
 
   const groupedAppointments = {
@@ -93,6 +101,14 @@ export default function Home() {
     afternoon: getAppointmentsByPeriod(appointments, "afternoon"),
     night: getAppointmentsByPeriod(appointments, "night"),
   };
+
+  function isTimeUnavailable(time: string) {
+    console.log(time);
+    return appointments.some(
+      (appointment) =>
+        appointment.date === appointmentDate && appointment.time === time,
+    );
+  }
 
   return (
     <div className="relative p-3 flex gap-3 flex-col md:flex-row max-w-360 mx-auto min-h-screen">
@@ -142,7 +158,7 @@ export default function Home() {
                     label={time.time}
                     value={time.time}
                     name="time"
-                    disabled={!validatedDate}
+                    disabled={!validatedDate || isTimeUnavailable(time.time)}
                     checked={selectedTimeId === time.id}
                     onChange={() => handleSelectTime(time.time, time.id)}
                   />
@@ -234,7 +250,7 @@ export default function Home() {
             </button>
           </header>
           <div className="flex flex-col gap-3 mt-8">
-            <div className="flex flex-col gap-3 mt-8">
+            <div className="flex flex-col gap-3">
               <AppointmentSection
                 title="Manhã"
                 range="09h-12h"
