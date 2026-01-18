@@ -10,30 +10,9 @@ import { useRef, useState } from "react";
 import { AppointmentSection } from "@/components/appointment-section";
 import { Button } from "@/components/button";
 import { RadioButton } from "@/components/radio-button";
+import { availableTimes } from "@/data";
 import type { IAppointment } from "@/types";
 import { getAppointmentsByPeriod, getCurrentDateForInput } from "@/utils";
-
-const availableTimes = {
-  morning: [
-    { id: crypto.randomUUID(), time: "09:00" },
-    { id: crypto.randomUUID(), time: "10:00" },
-    { id: crypto.randomUUID(), time: "11:00" },
-    { id: crypto.randomUUID(), time: "12:00" },
-  ],
-  afternoon: [
-    { id: crypto.randomUUID(), time: "13:00" },
-    { id: crypto.randomUUID(), time: "14:00" },
-    { id: crypto.randomUUID(), time: "15:00" },
-    { id: crypto.randomUUID(), time: "16:00" },
-    { id: crypto.randomUUID(), time: "17:00" },
-    { id: crypto.randomUUID(), time: "18:00" },
-  ],
-  night: [
-    { id: crypto.randomUUID(), time: "19:00" },
-    { id: crypto.randomUUID(), time: "20:00" },
-    { id: crypto.randomUUID(), time: "21:00" },
-  ],
-};
 
 export default function Home() {
   const inputDateRef = useRef<HTMLInputElement>(null);
@@ -91,6 +70,7 @@ export default function Home() {
     setAppointmentHour("");
     setCustomerName("");
     setValidatedDate(false);
+    setSelectedTimeId(null);
 
     if (inputDateRef.current) {
       inputDateRef.current.value = "";
