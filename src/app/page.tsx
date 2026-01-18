@@ -45,7 +45,6 @@ export default function Home() {
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentHour, setAppointmentHour] = useState("");
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
-
   const [filterDate, setFilterDate] = useState(getCurrentDateForInput());
 
   function openDatePicker() {
@@ -98,12 +97,18 @@ export default function Home() {
     }
   }
 
-  // Filtrar appointments pela data selecionada
+  function deleteAppointment(id: string) {
+    const updatedDeleteAppointments = appointments.filter(
+      (appointment) => appointment.id !== id,
+    );
+
+    setAppointments(updatedDeleteAppointments);
+  }
+
   const filteredAppointments = appointments.filter(
     (appointment) => appointment.date === filterDate,
   );
 
-  // Agrupar apenas os appointments filtrados
   const groupedAppointments = {
     morning: getAppointmentsByPeriod(filteredAppointments, "morning"),
     afternoon: getAppointmentsByPeriod(filteredAppointments, "afternoon"),
@@ -263,18 +268,21 @@ export default function Home() {
                 title="Manhã"
                 range="09h-12h"
                 appointments={groupedAppointments.morning}
+                handleDeleteAppointment={deleteAppointment}
               />
 
               <AppointmentSection
                 title="Tarde"
                 range="13h-18h"
                 appointments={groupedAppointments.afternoon}
+                handleDeleteAppointment={deleteAppointment}
               />
 
               <AppointmentSection
                 title="Noite"
                 range="19h-21h"
                 appointments={groupedAppointments.night}
+                handleDeleteAppointment={deleteAppointment}
               />
             </div>
           </div>

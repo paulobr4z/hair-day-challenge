@@ -5,12 +5,14 @@ interface AppointmentSectionProps {
   title: string;
   range: string;
   appointments: IAppointment[];
+  handleDeleteAppointment: (id: string) => void;
 }
 
 export function AppointmentSection({
   title,
   range,
   appointments,
+  handleDeleteAppointment,
 }: AppointmentSectionProps) {
   return (
     <div className="border border-gray-600 rounded-xl">
@@ -30,7 +32,11 @@ export function AppointmentSection({
               {appointment.time}
             </b>
             <p className="text-base/6 text-gray-200">{appointment.customer}</p>
-            <TrashIcon size={20} className="fill-yellow ml-auto" />
+            <TrashIcon
+              size={20}
+              className="fill-yellow ml-auto"
+              onClick={() => handleDeleteAppointment(appointment.id)}
+            />
           </div>
         ))
       ) : (
