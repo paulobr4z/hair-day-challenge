@@ -8,10 +8,6 @@ const createJestConfig = nextJest({
 const config: Config = {
   clearMocks: true,
 
-  collectCoverage: true,
-  coverageDirectory: "coverage",
-  coverageProvider: "v8",
-
   testEnvironment: "jest-environment-jsdom",
 
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
@@ -19,6 +15,20 @@ const config: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+
+  collectCoverage: true,
+
+  collectCoverageFrom: [
+    "src/components/**/*.{ts,tsx}",
+    "src/app/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/__tests__/**",
+  ],
+
+  coverageDirectory: "coverage",
+  coverageProvider: "v8",
+
+  coverageReporters: ["text", "html", "lcov"],
 };
 
 export default createJestConfig(config);
